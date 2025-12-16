@@ -7,7 +7,6 @@
 ![React](https://img.shields.io/badge/React-18-blue)
 ![MongoDB](https://img.shields.io/badge/MongoDB-5.0+-brightgreen)
 ![Docker](https://img.shields.io/badge/Docker-20.10+-blue)
-![License](https://img.shields.io/badge/License-MIT-yellow)
 
 🚀 **Enterprise-grade migration tool for transferring data from Outlook to Gmail**
 
