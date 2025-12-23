@@ -14,6 +14,10 @@
 
 </div>
 
+## 🎥 Project Demo
+👉 Click to watch demo video  
+https://drive.google.com/file/d/10-FppehN7GToh7fSeKf-AIS_ld-_p3hs/view?usp=drivesdk
+
 ## 📖 Overview
 
 **Outlook-Gmail Migrator** is a full-stack application that enables seamless migration of emails, contacts, calendar events, and drive files from Microsoft Outlook/Office 365 to Google Workspace. Built with microservices architecture, it provides a secure, scalable, and user-friendly interface for data migration.
