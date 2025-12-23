@@ -1,0 +1,32 @@
+type Query {
+    getJobStatus(jobId: String!): JobStatus
+    getUserJobs(userId: String!): [JobStatus]
+}
+
+type Mutation {
+    # ✅ REMOVED email parameter - will get from JWT token
+    migrateMail(outlookToken: String!, gmailToken: String!): MigrationResponse
+    migrateContacts(outlookToken: String!, gmailToken: String!): MigrationResponse
+    migrateCalendar(outlookToken: String!, gmailToken: String!): MigrationResponse
+    migrateDrive(outlookToken: String!, gmailToken: String!): MigrationResponse
+    migrateAll(outlookToken: String!, gmailToken: String!): MigrationResponse
+}
+
+type MigrationResponse {
+    status: String
+    message: String
+    jobId: String
+}
+
+type JobStatus {
+    jobId: String
+    status: String
+    progress: Int
+    message: String
+    userEmail: String
+    migrationType: String
+    totalItems: Int
+    processedItems: Int
+    startedAt: String
+    updatedAt: String
+}

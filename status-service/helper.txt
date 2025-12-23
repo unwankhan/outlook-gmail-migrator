@@ -1,0 +1,12 @@
+status-service/
+├── pom.xml
+├── Dockerfile
+└── src/main/java/com/unwan/status/
+    ├── StatusServiceApplication.java
+    ├── controller/StatusController.java
+    ├── service/StatusService.java
+    ├── model/
+    │   ├── MigrationJob.java
+    │   └── JobStatus.java
+    ├── repository/JobRepository.java
+    └── resources/application.yml

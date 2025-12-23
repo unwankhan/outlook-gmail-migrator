@@ -1,0 +1,91 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: migrator-mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: migrator
+    volumes:
+      - mongodb_data:/data/db
+    restart: unless-stopped
+
+  auth-service:
+    build: ./auth-service
+    container_name: auth-service
+    ports:
+      - "${AUTH_SERVICE_PORT:-8081}:8081"
+    environment:
+      - SPRING_DATA_MONGODB_URI=${MONGODB_URI:-mongodb://mongodb:27017/migrator}
+      - JWT_SECRET=${JWT_SECRET:-unwan-secret-key-2024}
+      - OUTLOOK_CLIENT_ID=${OUTLOOK_CLIENT_ID}
+      - OUTLOOK_CLIENT_SECRET=${OUTLOOK_CLIENT_SECRET}
+      - GMAIL_CLIENT_ID=${GMAIL_CLIENT_ID}
+      - GMAIL_CLIENT_SECRET=${GMAIL_CLIENT_SECRET}
+      - AUTH_SERVICE_PORT=8081
+    depends_on:
+      - mongodb
+    restart: unless-stopped
+
+  migration-service:
+    build: ./migration-service
+    container_name: migration-service
+    ports:
+      - "${MIGRATION_SERVICE_PORT:-8082}:8082"
+    environment:
+      - SPRING_DATA_MONGODB_URI=${MONGODB_URI:-mongodb://mongodb:27017/migrator}
+      - AUTH_SERVICE_URL=http://auth-service:8081
+      - STATUS_SERVICE_URL=http://status-service:8083
+      - MIGRATION_SERVICE_PORT=8082
+    depends_on:
+      - mongodb
+      - auth-service
+    restart: unless-stopped
+
+  status-service:
+    build: ./status-service
+    container_name: status-service
+    ports:
+      - "${STATUS_SERVICE_PORT:-8083}:8083"
+    environment:
+      - SPRING_DATA_MONGODB_URI=${MONGODB_URI:-mongodb://mongodb:27017/migrator}
+      - STATUS_SERVICE_PORT=8083
+    depends_on:
+      - mongodb
+    restart: unless-stopped
+
+  gateway-service:
+    build: ./gateway-service
+    container_name: gateway-service
+    ports:
+      - "${GATEWAY_SERVICE_PORT:-8080}:8080"
+    environment:
+      - AUTH_SERVICE_URL=http://auth-service:8081
+      - MIGRATION_SERVICE_URL=http://migration-service:8082
+      - STATUS_SERVICE_URL=http://status-service:8083
+      - GATEWAY_SERVICE_PORT=8080
+    depends_on:
+      - auth-service
+      - migration-service
+      - status-service
+    restart: unless-stopped
+
+#  frontend:
+#    build:
+#      context: ./frontend
+#      dockerfile: Dockerfile
+#    container_name: migrator-frontend
+#    ports:
+#      - "${FRONTEND_PORT:-5173}:5173"
+#    environment:
+#      - VITE_API_BASE_URL=http://gateway-service:8080
+#      - VITE_WS_URL=http://status-service:8083
+#      - FRONTEND_PORT=5173
+#    depends_on:
+#      - gateway-service
+#    restart: unless-stopped
+
+volumes:
+  mongodb_data:
